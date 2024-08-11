@@ -1,9 +1,9 @@
 {
-    "author" : ["Space Wizards"],
-    "install_msg" : "If you have the permissions, you can just use the echo command.",
+    "author" : ["Space Wizards, hiucko"],
+    "install_msg" : "Если у вас есть права - вы можете использовать команду echo.",
     "name" : "Echo",
-    "short" : "This just copies what you say.",
-    "description" : "This just copies what you say. And lets you edit it",
+    "short" : "Копирует сообщения, и отправляет от имени бота.",
+    "description" : "Копирует написанный вами текст, и отправляет от имени бота в указанный канал. А так же - позволяет вам редактировать содержимое отправленных ранее ботом сообщений.",
     "tags" : ["Echo"],
     "hidden" : true
 }

@@ -12,15 +12,15 @@ class Echo(commands.Cog):
     @checks.admin()
     async def adminmsg(self, ctx: commands.Context) -> None:
         """
-        Commands for managing and creating admin messages.
+        Команды для управления и создания сообщений от имени бота.
         """
         pass
 
     @adminmsg.command()
     async def create(self, ctx: commands.Context, chan: TextChannel) -> None:
         """
-        Create an admin message in the specified channel.
-        The contents of the message are everything except the first line of the message invoking the command, and are copied verbatim.
+        Создаёт сообщение от имени бота в выбранном канале.
+        Всё содержимое сообщения, кроме первой строки - будет скопировано в сообщение бота точь в точь.
         """
         msg = "\n".join(ctx.message.content.split("\n")[1:])
         if not msg:
@@ -38,8 +38,8 @@ class Echo(commands.Cog):
     @adminmsg.command()
     async def edit(self, ctx: commands.Context, editMessage: Message) -> None:
         """
-        Edits the contents of a message sent by the bot.
-        The contents of the message are everything except the first line of the message invoking the command, and are copied verbatim.
+        Редактирует содержимое сообщения отправленного от имени бота.
+        Всё содержимое сообщения, кроме первой строки - будет скопировано в сообщение бота точь в точь.
         """
         msg = "\n".join(ctx.message.content.split("\n")[1:])
         if not msg:
@@ -56,8 +56,8 @@ class Echo(commands.Cog):
     @adminmsg.command()
     async def raw(self, ctx: commands.Context, message: Message) -> None:
         """
-        Returns the raw contents of the message, escaping emoji, mentions and channels.
-        Useful for editing existing messages.
+        Возвращает необработанное содержимое сообщения, исключая авто-форматирование эмодзи, упоминания, и ссылки на каналы.
+        Полезно для редактирования существующих сообщений
         """
 
         if message.author != self.bot.user:
