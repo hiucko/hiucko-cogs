@@ -1,9 +1,5 @@
-from redbot.core.bot import Red
-from .authapi import AuthApi
-import discord
-from discord.ext import commands
-from datetime import datetime
-import requests
+from .authapi import authapi
 
-async def setup(bot: Red) -> None:
+
+async def setup(bot) -> None:
     await bot.add_cog(authapi(bot))
