@@ -14,20 +14,20 @@ log = getLogger("red.wizard-cogs.gameserverstatus")
 
 
 # Input class for the discord modal
-class Input(discord.ui.Modal, title='Input server details'):
-    name = discord.ui.TextInput(label='Name', placeholder='Server name (You can choose this yourself)', required=True)
+class Input(discord.ui.Modal, title='Введите информацию сервера'):
+    name = discord.ui.TextInput(label='Название', placeholder='Название сервера (Вы можете написать любое)', required=True)
     url = discord.ui.TextInput(label='URL',
-                               placeholder='Watchdog server URL (https://ss14.io/watchdog http://localhost:1212)',
+                               placeholder='Watchdog URL (http://localhost:1212) https://ss14.io/watchdog',
                                required=True)
-    key = discord.ui.TextInput(label='Server ID',
-                               placeholder='Server ID (ID of the the server)',
+    key = discord.ui.TextInput(label='ID Сервера',
+                               placeholder='ID Сервера (из appsettings.yml)',
                                required=True)
-    token = discord.ui.TextInput(label='API Token',
-                                 placeholder='Server token (Value of ApiToken)',
+    token = discord.ui.TextInput(label='API Токен',
+                                 placeholder='Токен сервера (значение ApiToken)',
                                  required=True)
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Processing...", ephemeral=True)
+        await interaction.response.send_message("Загрузка...", ephemeral=True)
         self.stop()
 
 
@@ -38,10 +38,10 @@ class Button(discord.ui.View):
         super().__init__()
         self.modal = None
 
-    @discord.ui.button(label='Add', style=discord.ButtonStyle.green)
+    @discord.ui.button(label='Добавить', style=discord.ButtonStyle.green)
     async def add(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.member != interaction.user:
-            return await interaction.response.send_message("You cannot use this.", ephemeral=True)
+            return await interaction.response.send_message("Ошибка.", ephemeral=True)
 
         self.modal = Input()
         await interaction.response.send_modal(self.modal)
@@ -86,7 +86,7 @@ class poweractions(commands.Cog):
         """
         view = Button(member=ctx.author)
 
-        await ctx.send("To add a server press this button.", view=view)
+        await ctx.send("Чтобы добавить сервер, нажмите кнопку.", view=view)
         await view.wait()
         if view.modal is None:
             return
@@ -95,20 +95,20 @@ class poweractions(commands.Cog):
 
         async with self.config.guild(ctx.guild).servers() as cur_servers:
             if view.modal.name.value in cur_servers:
-                await ctx.send("A server with that name already exists.")
+                await ctx.send("Сервер с этим именем уже существует.")
                 return
 
             if not view.modal.url.value.startswith("http://") and not view.modal.url.value.startswith("https://"):
-                await ctx.send("The URL must start with http:// or https://")
+                await ctx.send("URL должен начинаться с http:// или https://")
                 return
 
             # Remove trailing slash at the end of the URL
             if view.modal.url.value.endswith("/"):
-                await ctx.send("Remove the trailing slash at the end of the URL.")
+                await ctx.send("Уберите слеш в конце URL.")
 
             if view.modal.url.value.endswith(f"/instances/{view.modal.key.value}/restart"):
-                await ctx.send("No need for the last part of the URL, just the base URL to the watchdog (Example: "
-                               "https://ss14.io/watchdog, http://localhost:1212)")
+                await ctx.send("Нет необходимости указывать полный URL, достаточно лишь основной части Watchdog. (Например: "
+                               "http://localhost:5050 https://ss14.io/watchdog)")
                 return
 
             cur_servers[view.modal.name.value] = {
@@ -117,7 +117,7 @@ class poweractions(commands.Cog):
                 "token": view.modal.token.value
             }
 
-        await ctx.send("Server added successfully.")
+        await ctx.send("Сервер добавлен успешно.")
 
     @poweractionscfg.command()
     async def remove(self, ctx: commands.Context, name: str) -> None:
@@ -128,7 +128,7 @@ class poweractions(commands.Cog):
         """
         async with self.config.guild(ctx.guild).servers() as cur_servers:
             if name not in cur_servers:
-                await ctx.send("That server did not exist.")
+                await ctx.send("Такого сервера не существует.")
                 return
 
             del cur_servers[name]
@@ -143,7 +143,7 @@ class poweractions(commands.Cog):
         servers = await self.config.guild(ctx.guild).servers()
 
         if len(servers) == 0:
-            await ctx.send("No servers are currently configured!")
+            await ctx.send("Нет добавленных серверов!")
             return
 
         content = "\n".join(map(lambda s: f"{s[0]}: `{s[1]['address']}`", servers.items()))
@@ -152,11 +152,11 @@ class poweractions(commands.Cog):
         embed_pages = []
         for idx, page in enumerate(pages, start=1):
             embed = discord.Embed(
-                title="Server List",
+                title="Список серверов",
                 description=page,
                 colour=await ctx.embed_colour(),
             )
-            embed.set_footer(text="Page {num}/{total}".format(num=idx, total=len(pages)))
+            embed.set_footer(text="Страница {num}/{total}".format(num=idx, total=len(pages)))
             embed_pages.append(embed)
         await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
 
@@ -183,22 +183,22 @@ class poweractions(commands.Cog):
                 try:
                     status, response = await doaction(session, server, "restart")
                     if status != 200:
-                        await ctx.send(f"Failed to restart the server. Wrong status code: {status}")
-                        log.debug(f"Failed to restart {servername}. Wrong status code: {status} Response: {response}")
+                        await ctx.send(f"Не удалось перезапустить сервер. {status}")
+                        log.debug(f"Не удалось перезапустить {servername}. Код ошибки: {status} Код ответа: {response}")
                         return
 
                 except asyncio.TimeoutError:
-                    await ctx.send("Server timed out.")
+                    await ctx.send("Истекло время ожидания.")
                     return
 
                 except Exception:
                     await ctx.send(
-                        f"An Unknown error occured while trying to restart this server, Logging to console...")
+                        f"Произошла неизвестная ошибка при попытке перезапуска сервера. Logging to console...")
                     log.exception(
-                        f"An error occurred while trying restart server {servername}.")
+                        f"Произошла ошибка при попытке перезапуска {servername}.")
                     return
 
-            await ctx.send("Server restarted successfully.")
+            await ctx.send("Сервер перезапущен успешно!")
 
     @checks.admin()
     @commands.hybrid_command()
@@ -223,22 +223,22 @@ class poweractions(commands.Cog):
                 try:
                     status, response = await doaction(session, server, "update")
                     if status != 200:
-                        await ctx.send(f"Failed to request server update. Wrong status code: {status}")
-                        log.debug(f"Failed to update {servername}. Wrong status code: {status} Response: {response}")
+                        await ctx.send(f"Не удалось запросить обновление сервера. Код ошибки: {status}")
+                        log.debug(f"Не удалось обновить {servername}. Код ошибки: {status} Код ответа: {response}")
                         return
 
                 except asyncio.TimeoutError:
-                    await ctx.send("Server timed out.")
+                    await ctx.send("Истекло время ожидания.")
                     return
 
                 except Exception:
                     await ctx.send(
-                        f"An Unknown error occured while trying to request this server to update, Logging to console...")
+                        f"Произошла неизвестная ошибка при попытке обновления сервера. Logging to console...")
                     log.exception(
-                        f"An error occurred while trying update server {servername}.")
+                        f"Произошла ошибка при попытке обновления {servername}.")
                     return
 
-            await ctx.send("Server has been told to update successfully.")
+            await ctx.send("Запрос на обновление сервера был успешно отправлен.")
 
     @checks.admin()
     @commands.hybrid_command()
@@ -263,28 +263,28 @@ class poweractions(commands.Cog):
                 try:
                     status, response = await doaction(session, server, "stop")
                     if status != 200:
-                        await ctx.send(f"Failed to stop the server. Wrong status code: {status}")
-                        log.debug(f"Failed to stop {servername}. Wrong status code: {status} Response: {response}")
+                        await ctx.send(f"Не удалось остановить сервер. Код ошибки: {status}")
+                        log.debug(f"Не удалось остановить {servername}. Код ошибки: {status} Код ответа: {response}")
                         return
 
                 except asyncio.TimeoutError:
-                    await ctx.send("Server timed out.")
+                    await ctx.send("Истекло время ожидания.")
                     return
 
                 except Exception:
                     await ctx.send(
-                        f"An Unknown error occured while trying to stop this server, Logging to console...")
+                        f"Произошла неизвестная ошибка при попытке остановить сервер, Logging to console...")
                     log.exception(
-                        f"An error occurred while trying to stop the server {servername}.")
+                        f"Произошла ошибка при попытке остановки {servername}.")
                     return
 
-            await ctx.send("Server stopped successfully.")
+            await ctx.send("Сервер остановлен успешно.")
 
     async def get_server_from_arg(self, ctx: commands.Context, server) -> Optional[Any]:
         selectedserver = await self.config.guild(ctx.guild).servers()
 
         if server not in selectedserver:
-            await ctx.send("That server does not exist.")
+            await ctx.send("Такого сервера не существует.")
             return None
 
         return (server, selectedserver[server])
@@ -296,18 +296,18 @@ class poweractions(commands.Cog):
         Attemps to restarts all servers on the bot.
         """
         view = ConfirmView(ctx.author, disable_buttons=True, timeout=30)
-        view.message = await ctx.send(":warning: You are about to restart all servers configured on this bot "
-                                      "instance, are you certain this is what you want to do", view=view)
+        view.message = await ctx.send(":warning: Вы собираетесь перезапустить все сервера привязанные к этому инстансу бота. "
+                                      "Вы уверены что хотите это сделать?", view=view)
         await view.wait()
         if not view.result:
-            await ctx.send("Canceled. No action taken.")
+            await ctx.send("Отмена...")
             return
         else:
-            await ctx.send("Restarting all servers...")
+            await ctx.send("Перезагрузка...")
             async with ctx.typing():
                 network_data = await self.config.guild(ctx.guild).servers()
 
-                embed = Embed(title="Network Restart", description="Results of the restarts",
+                embed = Embed(title="Перезагрузка серверов", description="Результат перезагрузки",
                               color=await ctx.embed_colour())
 
                 async with aiohttp.ClientSession() as session:
@@ -315,20 +315,20 @@ class poweractions(commands.Cog):
                         try:
                             status, response = await doaction(session, server_details, "restart")
                             if status != 200:
-                                embed.add_field(name=server_name, value=f":x: Wrong status code: {status}",
+                                embed.add_field(name=server_name, value=f":x: Неправильный статус код: {status}",
                                                 inline=False)
-                                log.debug(f"(Network restart) Failed to restart {server_details[0]}. "
-                                          f"Wrong status code: {status} Response: {response}")
+                                log.debug(f"(Перезагрузка серверов) Не получилось перезапустить {server_details[0]}. "
+                                          f"Код ошибки: {status} Код ответа: {response}")
                             else:
-                                embed.add_field(name=server_name, value=":white_check_mark:  Success", inline=False)
+                                embed.add_field(name=server_name, value=":white_check_mark:  Успешно", inline=False)
 
                         except asyncio.TimeoutError:
-                            embed.add_field(name=server_name, value=":x: Timed out", inline=False)
+                            embed.add_field(name=server_name, value=":x: Истекло время ожидания", inline=False)
 
                         except Exception:
-                            embed.add_field(name=server_name, value=":x: Unknown error, Logging to console",
+                            embed.add_field(name=server_name, value=":x: Неизвестная ошибка, Logging to console",
                                             inline=False)
                             log.exception(
-                                f"(Network restart) An error occurred while trying restart server {server_name}.")
+                                f"(Перезагрузка серверов) Произошла ошибка при попытке перезагрузки {server_name}.")
 
-                await ctx.send("Done", embed=embed)
+                await ctx.send("Готово", embed=embed)
