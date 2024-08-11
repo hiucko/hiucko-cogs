@@ -153,7 +153,7 @@ class GameServerStatus(commands.Cog):
     @commands.check(is_guild)
     async def statuscfg(self, ctx: commands.Context) -> None:
         """
-        Commands for configuring the status servers.
+        Команды для настройки отображения статуса серверов.
         """
         pass
 
@@ -161,7 +161,7 @@ class GameServerStatus(commands.Cog):
     @commands.check(is_guild)
     async def status(self, ctx: commands.Context, server: Optional[str]) -> None:
         """
-        Shows status for a game server. Leave out server name to get a list of all servers.
+        Показывает статус игрового сервера. Не указывайте название сервера чтобы получить список всех добавленных серверов.
         """
 
         if not server:
@@ -335,16 +335,16 @@ class GameServerStatus(commands.Cog):
     @statuscfg.group()
     async def addserver(self, ctx: commands.Context) -> None:
         """
-        Adds a status server.
+        Добавляет сервер в список отслеживания статуса серверов. Сервер может вам не принадлежать.
         """
         pass
 
     @statuscfg.command()
     async def removeserver(self, ctx: commands.Context, name: str) -> None:
         """
-        Removes a status server.
+        Убирает сервер из списка отслеживаемых серверов.
 
-        `<name>`: The name of the server to remove.
+        `<name>`: Название сервера которое хотите убрать.
         """
         name = name.lower()
         async with self.config.guild(ctx.guild).servers() as cur_servers:
@@ -367,11 +367,11 @@ class GameServerStatus(commands.Cog):
     @addserver.command(name="ss14")
     async def addserver_ss14(self, ctx: commands.Context, name: str, address: str, longname: Optional[str]) -> None:
         """
-        Adds an SS14-type server.
+        Добавляет сервер SS14
 
-        `<name>`: The short name to refer to this server.
-        `<address>`: The `ss14://` or `ss14s://` address of this server.
-        `[longname]`: The "full name" of this server.
+        `<name>`: Краткое название сервера.
+        `<address>`: Адрес сервера в формате: `ss14://` или `ss14s://`.
+        `[longname]`: Полное название сервера.
         """
         name = name.lower()
         async with self.config.guild(ctx.guild).servers() as cur_servers:
@@ -390,7 +390,7 @@ class GameServerStatus(commands.Cog):
     @addserver.command(name="ss13")
     async def addserver_ss13(self, ctx: commands.Context, name: str, address: str, longname: Optional[str]) -> None:
         """
-        Adds an SS13-type server.
+        Adds an SS13-type server. Все равно это никто не увидит. Когда-нибудь дополню.
 
         `<name>`: The short name to refer to this server.
         `<address>`: The `byond://` address of this server.
@@ -437,10 +437,10 @@ class GameServerStatus(commands.Cog):
     @statuscfg.command()
     async def addwatch(self, ctx: commands.Context, name: str, channel: TextChannel) -> None:
         """
-        Adds a server to the watch list. The bot will update a message with the server status every minute.
+        Создает, и раз в минуту обновляет сообщение со статусом сервера.
 
-        `<name>`: The name of the server to watch.
-        `<channel>`: The channel to send the message to.
+        `<name>`: Название сервера.
+        `<channel>`: Канал в который отправить сообщение.
         """
         name = name.lower()
         async with self.config.guild(ctx.guild).watches() as watches:
@@ -462,10 +462,10 @@ class GameServerStatus(commands.Cog):
     @statuscfg.command()
     async def remwatch(self, ctx: commands.Context, name: str, channel: TextChannel) -> None:
         """
-        Removes a server to the watch list.
+        Убирает сервер из списка отслеживаемых серверов.
 
-        `<name>`: The name of the server to remove from a watch.
-        `<channel>`: The channel to remove from.
+        `<name>`: Название сервера который убрать из списка.
+        `<channel>`: Канал из которого убрать.
         """
         name = name.lower()
         async with self.config.guild(ctx.guild).watches() as watches:
@@ -490,7 +490,7 @@ class GameServerStatus(commands.Cog):
     @statuscfg.command()
     async def watches(self, ctx: commands.Context) -> None:
         """
-        Lists currently active watches
+        Выводит список отслеживаемых серверов.
         """
         watches = await self.config.guild(ctx.guild).watches()
 
