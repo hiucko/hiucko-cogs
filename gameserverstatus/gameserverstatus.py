@@ -256,7 +256,7 @@ class GameServerStatus(commands.Cog):
             if name:
                 embed.title = name
 
-            embed.add_field(name"Players", value=f"{count}/{countmax}")
+            embed.add_field(name"Players Online", value=f"{count}/{countmax}")
 
             rlevel = json.get("run_level")
             if rlevel is not None:
