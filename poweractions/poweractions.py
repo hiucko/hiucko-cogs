@@ -75,14 +75,14 @@ class poweractions(commands.Cog):
     @checks.admin()
     async def poweractionscfg(self, ctx: commands.Context) -> None:
         """
-        Commands for configuring the servers to be able to manage the actions for power actions.
+        Команды для редактирования списка серверов poweractions.
         """
         pass
 
     @poweractionscfg.command()
     async def add(self, ctx: commands.Context) -> None:
         """
-        Adds a server.
+        Добавляет сервер.
         """
         view = Button(member=ctx.author)
 
@@ -122,9 +122,9 @@ class poweractions(commands.Cog):
     @poweractionscfg.command()
     async def remove(self, ctx: commands.Context, name: str) -> None:
         """
-        Removes a server.
+        Убирает сервер.
 
-        `<name>`: The name of the server to remove.
+        `<name>`: Название сервера который убираем из списка.
         """
         async with self.config.guild(ctx.guild).servers() as cur_servers:
             if name not in cur_servers:
@@ -138,7 +138,7 @@ class poweractions(commands.Cog):
     @poweractionscfg.command()
     async def list(self, ctx: commands.Context) -> None:
         """
-        Get a list of servers.
+        Показывает список серверов добавленых в список.
         """
         servers = await self.config.guild(ctx.guild).servers()
 
@@ -164,11 +164,11 @@ class poweractions(commands.Cog):
     @commands.hybrid_command()
     async def restartserver(self, ctx: commands.Context, server: Optional[str]) -> None:
         """
-        Restarts a server.
+        Перезагружает сервер.
 
-        `<server>`: The name of the server to restart.
+        `<server>`: Название сервера для перезагрузки.
         """
-        if not server:
+        if not server: # смотри гайдбук визардов, запросы watchdog - /restart /update /shutdown (/stop). именно они и исполняются командами ниже.
             await self.list(ctx)
             return
 
@@ -204,9 +204,9 @@ class poweractions(commands.Cog):
     @commands.hybrid_command()
     async def updateserver(self, ctx: commands.Context, server: Optional[str]) -> None:
         """
-        Sends an update request to a server.
+        Отправляет запрос на обновление сервера.
 
-        `<server>`: The name of the server to update.
+        `<server>`: Название сервреа для обновления.
         """
         if not server:
             await self.list(ctx)
@@ -244,9 +244,9 @@ class poweractions(commands.Cog):
     @commands.hybrid_command()
     async def stopserver(self, ctx: commands.Context, server: Optional[str]) -> None:
         """
-        Stops a server. The server will wait for the round to end, but will not be automatically restarted.
+        Останавливает сервер в конце раунда. Но лишь останавливает. Обратно не включит.
 
-        `<server>`: The name of the server to stop.
+        `<server>`: Название сервера для остановки.
         """
         if not server:
             await self.list(ctx)
@@ -293,7 +293,7 @@ class poweractions(commands.Cog):
     @commands.hybrid_command()
     async def restartnetwork(self, ctx: commands.Context) -> None:
         """
-        Attemps to restarts all servers on the bot.
+        Перезагружает все сервера в списке poweractions.
         """
         view = ConfirmView(ctx.author, disable_buttons=True, timeout=30)
         view.message = await ctx.send(":warning: Вы собираетесь перезапустить все сервера привязанные к этому инстансу бота. "
