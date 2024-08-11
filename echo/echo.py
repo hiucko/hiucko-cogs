@@ -24,13 +24,13 @@ class Echo(commands.Cog):
         """
         msg = "\n".join(ctx.message.content.split("\n")[1:])
         if not msg:
-            await ctx.reply("Message is empty! Put it on a new line!")
+            await ctx.reply("Пустое сообщение! Введите его на следующей строке!")
             return
 
         try:
             await chan.send(msg)
         except discord.Forbidden:
-            await ctx.reply("I do not have permission to send there!")
+            await ctx.reply("У меня нет прав чтобы отправить его в этот канал!!")
             return
 
         await ctx.tick()
@@ -43,11 +43,11 @@ class Echo(commands.Cog):
         """
         msg = "\n".join(ctx.message.content.split("\n")[1:])
         if not msg:
-            await ctx.reply("Message is empty! Put it on a new line!")
+            await ctx.reply("Пустое сообщение! Введите его на следующей строке!")
             return
 
         if editMessage.author != self.bot.user:
-            await ctx.reply("I didn't send that message!")
+            await ctx.reply("Я не отправлял такого сообщения!!")
             return
 
         await editMessage.edit(content=msg)
@@ -61,7 +61,7 @@ class Echo(commands.Cog):
         """
 
         if message.author != self.bot.user:
-            await ctx.reply("I didn't send that message!")
+            await ctx.reply("Я не отправлял такого сообщения!")
             return
 
         # Regular expression for emoji.
