@@ -25,24 +25,32 @@ class responder(commands.Cog):
 
 
         # Tetris
-        match = re.search(r".*tetris.*", message.content, re.IGNORECASE)
+        match = re.search(r".*тетрис.*", message.content, re.IGNORECASE)
         if match:
-            await channel.send("*Nanotrasen Block Game:tm:")
+            await channel.send("*НТ Блоки:tm:")
 
         # WYCI
-        match = re.search(r"\S\s+(?:when|whence)[\s*?.!)]*$", message.content, re.IGNORECASE)
+        match = re.search(r"\S\s+(?:when|whence|когда)[\s*?.!)]*$", message.content, re.IGNORECASE)
         if match:
             if random.random() > 0.005:
-                await channel.send("When You Code It.")
+                await channel.send("Через час.")
             else:
-                await channel.send("Never.")
+                await channel.send("Никогда.")
 
         # Based
 
-        match = re.search(r"^\s*(based|gebaseerd|basé|basato|basado|basiert|βασισμένο|βασισμενο|ベース)[\s*?.!)]*$", message.content,
+        match = re.search(r"^\s*(based|gebaseerd|basé|basato|basado|basiert|βασισμένο|βασισμενο|ベース|базировано|базированно)[\s*?.!)]*$", message.content,
                           re.IGNORECASE)
 
         if match:
+            if match.group(1).lower() == "базировано":
+                based = "Базировано где?"
+                unbased = "Не базировано."
+
+            if match.group(1).lower() == "базированно":
+                based = "Базированно где?"
+                unbased = "Не базированно." # я не знаю как правильно :<
+
             if match.group(1).lower() == "based":
                 based = "Based on what?"
                 unbased = "Not Based."
