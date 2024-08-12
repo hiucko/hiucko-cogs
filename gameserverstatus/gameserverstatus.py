@@ -518,10 +518,10 @@ class GameServerStatus(commands.Cog):
     async def printer(self) -> None:
         try:
             for (g_id, dat) in (await self.config.all_guilds()).items():
-                for watch in dat["сервера"]:
-                    msg_id = watch["сообщение"]
-                    ch_id = watch["канал"]
-                    server = watch["сервер"]
+                for watch in dat["servers"]:
+                    msg_id = watch["message"]
+                    ch_id = watch["channel"]
+                    server = watch["server"]
 
                     try:
                         channel: TextChannel = self.bot.get_channel(ch_id)
