@@ -506,11 +506,11 @@ class GameServerStatus(commands.Cog):
         embed_pages = []
         for idx, page in enumerate(pages, start=1):
             embed = discord.Embed(
-                title="Список отслеживаемых серверов",
+                title="Список отслеживаемых серверов.",
                 description=page,
                 colour=await ctx.embed_colour(),
             )
-            embed.set_footer(text="Страница {num}/{total}".format(num=idx, total=len(pages)))
+            embed.set_footer(text="Page {num}/{total}".format(num=idx, total=len(pages)))
             embed_pages.append(embed)
         await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
 
