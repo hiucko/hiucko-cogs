@@ -518,7 +518,7 @@ class GameServerStatus(commands.Cog):
     async def printer(self) -> None:
         try:
             for (g_id, dat) in (await self.config.all_guilds()).items():
-                for watch in dat["servers"]:
+                for watch in dat["watches"]:
                     msg_id = watch["message"]
                     ch_id = watch["channel"]
                     server = watch["server"]
